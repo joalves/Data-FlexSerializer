@@ -184,7 +184,8 @@ sub BUILD {
     $self->sereal_decoder if $self->detect_sereal;
     $self->sereal_encoder if $self->output_format eq 'sereal';
 
-    my @detect = grep { my $meth = "detect_$_"; $self->$meth } @detectors_order;
+    # subclasses accessors are not ready at build time
+    my @detect = grep { $self->{"detect_$_"} } @detectors_order;
 
     if (!@detect) {
         die "Can't deserialize without assuming or detecting a format. Pass a detect_{format} option. If only one is passed we don't do detection and always assume to receive that format.";
@@ -268,7 +269,8 @@ sub make_deserializer {
   my $assume_compression = $self->assume_compression;
   my $detect_compression = $self->detect_compression;
 
-  my @detectors = grep { my $meth = "detect_$_"; $self->$meth } @detectors_order;
+  # subclasses accessors are not ready at build time
+  my @detectors = grep { $self->{"detect_$_"} } @detectors_order;
 
   if (DEBUG) {
     warn "Detectors: @detectors";
